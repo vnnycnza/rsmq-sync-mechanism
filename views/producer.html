@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Basic Sync Mechanism: Producer</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" 
+    rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" 
+    crossorigin="anonymous">
+  </head>
+
+  <body class="top-margin">
+    <div class = "container-fluid">
+    <div class="row"></br></div>
+
+    <div class="row">
+      <div class="col-sm-6 offset-md-3 page-header">
+          <h3>Producer - Add Job</h3>
+      </div>
+    </div>
+
+    <div class="row p-3">
+      <div class="col-sm-6 offset-md-3 page-header">
+        <div id="response" class="alert d-none" role="alert">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-6 offset-md-3 bg-light p-3">
+        <form id="new-message-form" method="post">
+          <div class="form-group">
+            <label for="sender">Sender</label>
+            <input id="sender" class="form-control" name="sender" type="text" placeholder="Name">
+          </div>
+          <div class="form-group">
+            <label for="title">Job Title</label>
+            <input id="title" class="form-control" name="title" type="text" placeholder="Job Name">
+          </div>
+          <div class="form-group">
+            <label for="desc">Description</label>
+            <textarea class="form-control" id="desc" name="desc" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Send</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    </script>
+
+    <script>
+      $(function () {
+        $('#new-message-form').on('submit', function (e) {
+          e.preventDefault();
+
+          var input = {
+            sender: $('input#sender').val(),
+            title: $('input#title').val(),
+            desc: $('textarea#desc').val()
+          };
+
+          $.ajax({
+            type: 'POST',
+            url: '/entries',
+            processData: false,
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(input)
+          }).done(function(data, status, xhr){
+            $('div#response').removeClass("d-none");
+            $('div#response').addClass("alert-success d-block");
+            $('div#response').append("Job Entry Sent");
+            setTimeout(function(){
+              $('div#response').removeClass("alert-success d-block");
+              $('div#response').addClass("d-none");
+              $('div#response').empty();
+              $('input#sender').val('');
+              $('input#title').val('');
+              $('textarea#desc').val('');
+            },2000);
+          }).fail(function(xhr, status){
+            $('div#response').removeClass("d-none");
+            $('div#response').addClass("alert-danger d-block");
+            $('div#response').append(xhr.responseJSON.error || 'An error');
+            setTimeout(function(){
+              $('div#response').removeClass("alert-danger d-block");
+              $('div#response').addClass("d-none");
+              $('div#response').empty();
+            },2000);
+            console.log('error');
+          });
+        });
+      });
+    </script>
+
+  </body>
+</html>

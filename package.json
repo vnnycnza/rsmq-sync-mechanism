@@ -1,0 +1,24 @@
+{
+  "name": "rsmq-sync-mechanism",
+  "version": "1.0.0",
+  "description": "simple sync mechanism with msg producer & consumer",
+  "main": "producer.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "rsmq-worker": "^0.5.2",
+    "socket.io": "^2.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^5.6.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "@vnnycnza",
+  "license": "ISC"
+}

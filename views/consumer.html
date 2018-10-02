@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Basic Sync Mechanism: Consumer</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" 
+    rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" 
+    crossorigin="anonymous">
+  </head>
+
+  <body class="top-margin">
+    <div class = "container-fluid">
+    <div class="row"></br></div>
+
+    <div class="row">
+      <div class="col-sm-6 offset-md-3 page-header">
+          <h3>Consumer - Get Jobs</h3>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-6 offset-md-3">
+        <div id="response" class="alert d-none" role="alert">
+        </div>
+      </div>
+    </div>
+
+    <div id="jobs">
+    </div>
+
+    <div class="row">
+      <div class="col-sm-6 offset-md-3">
+        <form id="get-jobs">
+          <button type="submit" class="btn btn-primary btn-block">Get Jobs</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var sckt = io('/jobs');
+
+      function updateFeed (entry, method) {
+
+        if (method === 'delete') {
+          var msgid = entry.del;
+          $('div#' + msgid).closest('div.row').remove();
+        } else {
+          var newM = '<div class="row p-2" id="' + entry.id + '">' + 
+              '<div class="col-md-6 offset-md-3 page-header"><div id="job-entry" class="alert alert-primary" role="alert">' +
+              '<h5 class="alert-heading">' + entry.sender + '</h5><hr>' +
+               '<p>Job ID: ' + entry.id + '</p>' + 
+              '<p>' + entry.title + '</p>' + 
+              '<p class="mb-0">' + entry.desc + '</p>' +
+              '<p><br><button type="button" class="job-button btn btn-light" data-btnid="'+ entry.id +'"> Take Job </button></p>' +
+              '</div></div></div>';
+
+          if (method === 'append') {
+            $('#jobs').append(newM);
+          } else if (method === 'prepend') {
+            $('#jobs').prepend(newM);
+          }
+        }
+      }
+
+      function getMessages () {
+        $.ajax({
+          type: 'GET',
+          dataType: 'json',
+          processData: false,
+          contentType: 'application/json',
+          url: '/entries'
+        })
+        .done(function (data, status, xhr) {
+          var response = xhr.responseJSON;
+          if (response.jobs) {
+            response.jobs.reverse().map(function(item){
+              updateFeed(item, 'append');
+              $('#get-jobs').addClass("d-none");
+            });
+          } else {
+            $('#get-jobs').addClass("d-none");
+          }
+
+          sckt.on('broadcast', function(item) {
+            updateFeed(JSON.parse(item), 'prepend');
+          });
+
+        }).fail(function (xhr, status) {
+          console.log('Failed retrieve of jobs');
+        });
+      }
+
+      function takeJobs(id) {
+        $.ajax({
+          type: 'POST',
+          url: '/jobs',
+          processData: false,
+          contentType: 'application/json',
+          dataType: 'json',
+          data: JSON.stringify({ id: id })
+        })
+        .done(function (data, status, xhr) {
+            $('div#response').removeClass('d-none');
+            $('div#response').addClass('alert-success d-block');
+            $('div#response').html('Congrats! You took Job ID: ' + xhr.responseJSON.id);
+            setTimeout(function(){
+              $('div#response').removeClass('alert-success d-block');
+              $('div#response').addClass('d-none');
+            },2000);      
+        }).fail(function (xhr, status) {
+           console.log('Failed take job');
+        });
+      }
+
+      sckt.on('delete', function(item) {
+        updateFeed(JSON.parse(item), 'delete');
+      });
+
+      $(function () {
+        $('body').on('submit', '#get-jobs', function (e) {
+          e.preventDefault();
+          getMessages();
+        });
+
+        $('body').on('click', '.job-button', function(e){
+          e.preventDefault();
+          console.log($(this).data('btnid'));
+          takeJobs($(this).data('btnid'));
+        });
+
+      });
+    </script>
+
+  </body>
+</html>
