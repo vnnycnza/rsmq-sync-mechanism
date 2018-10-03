@@ -32,9 +32,9 @@ POST /entries
 Content-Type: application/json
 
 {
-	"sender": "Ginny",
-	"title": "Unlock the chamber",
-	"desc": "Follow instructions from the diary"
+  "sender": "Ginny",
+  "title": "Unlock the chamber",
+  "desc": "Follow instructions from the diary"
 }
 ```
 Response:
@@ -60,22 +60,22 @@ Content-Type: application/json
 Response
 ```
 [{
-	"sender": "Harry",
-	"title": "Kill Voldemort",
-	"desc": "Find all horcruxes",
-	"id": "ID-1"
+  "sender": "Harry",
+  "title": "Kill Voldemort",
+  "desc": "Find all horcruxes",
+  "id": "ID-1"
 },
 {
-	"sender": "Ron",
-	"title": "Fly and Soar",
-	"desc": "Find ways to fly",
-	"id": "ID-2"
+  "sender": "Ron",
+  "title": "Fly and Soar",
+  "desc": "Find ways to fly",
+  "id": "ID-2"
 },
 {
-	"sender": "Hermione",
-	"title": "Leviosa",
-	"desc": "Teach Ron how to levitate",
-	"id": "ID-3"
+  "sender": "Hermione",
+  "title": "Leviosa",
+  "desc": "Teach Ron how to levitate",
+  "id": "ID-3"
 }]
 ```
 
@@ -105,7 +105,8 @@ Settings are pretty straightforward. To configure, see `utils/config.js`.
 ## How to run
 
 1. For both `producer.js` and `consumer.js`, make sure to install and use Node v8+.
-2. Make sure to have a redis instance running. Apply configuration in `utils/config.js`
+2. Make sure to have a redis instance running. Apply configuration in `utils/config.js`.
+Default host is `locahost` with port `6379`.
 3. Run `npm install`
 4. Run `node producer.js` to start web server and `node consumer.js` to start workers.
 5. Open `http://localhost:3000/` in browser to add jobs.
