@@ -111,13 +111,6 @@ Settings are pretty straightforward. To configure, see `utils/config.js`.
 5. Open `http://localhost:3000/` in browser to add jobs.
 6. Open `http://localhost:3001/jobs` in browser to consume jobs.
 
-
-## Diagrams
-
-* ![Producer - POST /entries](docs/AddJob.png)
-* ![Consumer - GET /entries](docs/GetJobs.png)
-* ![Consumer - POST /jobs](docs/TakeJob.png)
-
 ## Solution
 
 For this app, there are 3 queues used to store jobs/messages:
@@ -137,7 +130,11 @@ consumers. This is created so newly connected clients can still retrieve jobs th
 is saved in this queue. Connected clients listens for jobs sent to this queue upon connecting also via sockets. Expected behavior is when a job is taken, 
 message is broadcasted to connected clients and then job will be removed from their view.
 
+## Diagrams
 
+* [Producer - POST /entries](docs/AddJob.png)
+* [Consumer - GET /entries](docs/GetJobs.png)
+* [Consumer - POST /jobs](docs/TakeJob.png)
 
 
 
