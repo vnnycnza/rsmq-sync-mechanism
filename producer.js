@@ -37,30 +37,27 @@ app.post('/entries', (req, res) => {
   console.log(`${fxn} Request ${req.method} ${req.url}`);
 
   if (!req.body || !req.body.sender || !req.body.title || !req.body.desc) {
-    return res.status(400).json({
-      error: 'Incomplete Parameters'
-    });
+    return res.status(400).json({ error: 'Incomplete Parameters' });
   }
 
-  let toSend = {
+  const toSend = {
     sender: req.body.sender,
     title: req.body.title,
     desc: req.body.desc,
-    name: 'app'
+    name: 'app',
   };
 
   console.log(`${fxn} Send message to queue`);
-  
-  pWorker.send(JSON.stringify(toSend), (err, msg_id) => {
-    if (err) console.log(`${fxn} Error in saving to queue: ${cfg.queue.p.name}`);
-    toSend.id = msg_id;
 
-    npWorker.send(JSON.stringify(toSend), (err) => {
-      if (err) console.log(`${fxn} Error in saving to queue: ${cfg.queue.np.name}`);
+  pWorker.send(JSON.stringify(toSend), (pErr, msgId) => {
+    if (pErr) console.log(`${fxn} Error in saving to queue: ${cfg.queue.p.name}`);
+    toSend.id = msgId;
+
+    npWorker.send(JSON.stringify(toSend), (npErr) => {
+      if (npErr) console.log(`${fxn} Error in saving to queue: ${cfg.queue.np.name}`);
       return res.json({ status: 'OK' });
     });
   });
-
 });
 
 /*
